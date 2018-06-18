@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "angular4": "^1.0.0",
+    "bootstrap": "^4.1.1"
+  },
+  "name": "media-streamer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
