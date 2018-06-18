@@ -1,7 +1,7 @@
 buildscript {
 	ext {
 		springBootVersion = '2.1.0.BUILD-SNAPSHOT'
-		netLgtVersion = '0.15'
+		aptVersion = '0.15'
 	}
 	repositories {
 		jcenter()
@@ -9,11 +9,11 @@ buildscript {
 		mavenCentral()
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
-		maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath("net.ltgt.gradle:gradle-apt-plugin:${netLgtVersion}")
+		classpath("net.ltgt.gradle:gradle-apt-plugin:${aptVersion}")
 	}
 }
 
@@ -26,17 +26,26 @@ apply plugin: 'jacoco'
 
 group = 'media'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_10
 
 repositories {
-	mavenCentral()
-	maven { url "https://repo.spring.io/snapshot" }
-	maven { url "https://repo.spring.io/milestone" }
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://plugins.gradle.org/m2/" }
 }
 
+task wrapper(type: Wrapper) {
+    gradleVersion = "${gradleVersion}"
+}
 
 ext {
 	springCloudVersion = 'Finchley.BUILD-SNAPSHOT'
+    mapStructVersion = '1.2.0.Final'
+    gradleVersion = '4,8'
+    jacocoVersion = '0.8.1'
 }
 
 dependencies {
@@ -55,11 +64,10 @@ dependencies {
 //	compile('org.springframework.cloud:spring-cloud-stream-reactive')
 	compile('org.freemarker:freemarker')
 	compile('org.springframework.boot:spring-boot-starter-freemarker')
-	compile('org.mapstruct:mapstruct')
-	compile('org.mapstruct:mapstruct-jdk8')
-	apt("org.mapstruct:mapstruct-processor")
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
+    compile("org.mapstruct:mapstruct-jdk8:${mapStructVersion}")
+    apt("org.mapstruct:mapstruct-processor:${mapStructVersion}")
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('io.projectreactor:reactor-test')
 	testCompile('org.springframework.cloud:spring-cloud-stream-test-support')
@@ -79,6 +87,17 @@ jacocoTestReport {
 		html.enabled false
 		csv.enabled false
 	}
+}
+
+jacoco {
+    toolVersion = "${jacocoVersion}"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs = [
+            '-Amapstruct.suppressGeneratorTimestamp=true'
+    ]
 }
 
 check.dependsOn jacocoTestReport

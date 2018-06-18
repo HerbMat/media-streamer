@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/")
 public class MediaController {
 
+    /**
+     * It is responsible for presenting media index page.
+     * 
+     * @return path to the media index page
+     */
     @GetMapping
     public String index() {
         return "media/index";

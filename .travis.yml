@@ -2,9 +2,12 @@ language: java
 sudo: false
 jdk:
   - oraclejdk10
-before_script:
+before_install:
   - chmod +x gradlew
+install:
+  - ./gradlew -version
 script:
+  - ./gradlew build
   - ./gradlew check
 after_success:
   - bash <(curl -s https://codecov.io/bash)
