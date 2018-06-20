@@ -46,22 +46,16 @@ ext {
     mapStructVersion = '1.2.0.Final'
     gradleVersion = '4,8'
     jacocoVersion = '0.8.1'
+	minioVersion = '4.0.1'
 }
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
-//	compile('org.springframework.boot:spring-boot-starter-amqp')
 	compile('org.springframework.boot:spring-boot-starter-aop')
-//	compile('org.springframework.boot:spring-boot-starter-data-cassandra-reactive')
-//	compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
-//	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-//	compile('org.springframework.boot:spring-boot-starter-data-redis-reactive')
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-webflux')
-//	compile('org.flywaydb:flyway-core')
-//	compile('org.springframework.cloud:spring-cloud-stream-binder-rabbit')
-//	compile('org.springframework.cloud:spring-cloud-stream-reactive')
+	compile("io.minio:minio:${minioVersion}")
 	compile('org.freemarker:freemarker')
 	compile('org.springframework.boot:spring-boot-starter-freemarker')
 	runtime('org.springframework.boot:spring-boot-devtools')

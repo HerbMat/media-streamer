@@ -1,11 +1,14 @@
 <#import "spring.ftl" as spring />
 
 <#macro page_title>
-            <title><@spring.messageText "page.title" "S.M.P"/></title>
+    <title><@spring.messageText "page.title" "S.M.P"/></title>
 </#macro>
 
 <#macro header_links>
-            <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/custom/upload.js"></script>
 </#macro>
 
 <#macro navbar>

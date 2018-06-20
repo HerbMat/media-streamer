@@ -3,7 +3,9 @@
 !gradle/wrapper/gradle-wrapper.jar
 /src/main/resources/static/*
 !/src/main/resources/static/.yarn-integrity
+!/src/main/resources/static/custom
 yarn-error.log
+node_modules
 
 ### STS ###
 .apt_generated
