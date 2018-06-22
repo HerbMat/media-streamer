@@ -1,11 +1,13 @@
 package media.mediastreamer.controller;
 
 import media.mediastreamer.form.UploadForm;
+import media.mediastreamer.service.MediaService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -30,6 +32,9 @@ public class MediaControllerTest {
     @Mock
     private FactoryBean<UploadForm> uploadFormFactory;
 
+    @Mock
+    private MediaService mediaService;
+
     @InjectMocks
     private MediaController mediaController;
 
@@ -37,6 +42,7 @@ public class MediaControllerTest {
 
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(mediaController).build();
     }
 

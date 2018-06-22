@@ -1,6 +1,7 @@
 package media.mediastreamer.controller;
 
 import media.mediastreamer.form.UploadForm;
+import media.mediastreamer.service.MediaService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class MediaController {
 
     private FactoryBean<UploadForm> uploadFormFactory;
+    private MediaService mediaService;
 
-    public MediaController(FactoryBean<UploadForm> uploadFormFactory) {
+    public MediaController(FactoryBean<UploadForm> uploadFormFactory, MediaService mediaService) {
         this.uploadFormFactory = uploadFormFactory;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -55,8 +58,9 @@ public class MediaController {
      * @return path to the media upload page
      */
     @PostMapping("/upload")
-    public String upload(@ModelAttribute("uploadForm") UploadForm uploadForm, Model model) {
-        model.addAttribute("uploadForm", uploadForm);
+    public String upload(@ModelAttribute("uploadForm") UploadForm uploadForm, Model model) throws Exception {
+        mediaService.upload(uploadForm.getMediaFile());
+        model.addAttribute("uploadForm", uploadFormFactory.getObject());
 
         return "media/upload";
     }
