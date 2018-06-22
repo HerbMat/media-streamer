@@ -6,6 +6,7 @@ import media.mediastreamer.service.MinioFileService;
 import org.apache.logging.log4j.Level;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Log4j2
+@Profile({ "production", "dev" })
 public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
 
     private MinioFileService minioFileService;
