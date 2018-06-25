@@ -1,5 +1,6 @@
 package media.mediastreamer.controller;
 
+import media.mediastreamer.MediaStreamerApplicationTests;
 import media.mediastreamer.form.UploadForm;
 import media.mediastreamer.service.MediaService;
 import org.junit.Before;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(classes = MediaStreamerApplicationTests.TestMinioConfiguration.class)
 public class MediaControllerTest {
 
     @Mock
