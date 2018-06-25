@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class MinioConfig {
 
     @Bean
-    MinioClient minioClient(MinioConfigurationProperties minioConfigurationProperties) throws InvalidPortException, InvalidEndpointException {
+    public MinioClient minioClient(MinioConfigurationProperties minioConfigurationProperties) throws InvalidPortException, InvalidEndpointException {
         return new MinioClient(minioConfigurationProperties.getUrl(), minioConfigurationProperties.getAccessKey(), minioConfigurationProperties.getSecretKey());
     }
 }

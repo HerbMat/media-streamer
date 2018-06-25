@@ -115,7 +115,7 @@ public class DefaultMinioFileService implements MinioFileService {
 
     private void addItemToFileResultSet(Result<Item> itemResult, Set<FileResult> fileResultSet) {
         try {
-            fileResultSet.add(FileResultMapper.INSTANCE.ItemToFileResult(itemResult.get()));
+            fileResultSet.add(FileResultMapper.INSTANCE.itemToFileResult(itemResult.get()));
         }   catch (MinioException | GeneralSecurityException | XmlPullParserException | IOException e) {
             log.log(Level.ERROR, e.getMessage());
         }

@@ -18,11 +18,11 @@ import javax.validation.constraints.NotEmpty;
 public class MinioConfigurationProperties {
 
     @NotEmpty
-    String url;
+    private String url;
 
     @NotEmpty
-    String secretKey;
+    private String secretKey;
 
     @NotEmpty
-    String accessKey;
+    private String accessKey;
 }

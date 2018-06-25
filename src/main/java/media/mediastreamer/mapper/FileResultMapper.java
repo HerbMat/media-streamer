@@ -23,5 +23,5 @@ public interface FileResultMapper {
             @Mapping(target = "storageClass", expression = "java(item.storageClass())"),
             @Mapping(target = "owner", expression = "java(new FileResult.Owner(item.owner().id(), item.owner().displayName()))")
     })
-    FileResult ItemToFileResult(Item item);
+    FileResult itemToFileResult(Item item);
 }

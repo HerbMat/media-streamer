@@ -37,12 +37,12 @@ public class DefaultMinioFileServiceTest {
 
     private static final String TEST_BUCKET_NAME = "bucket";
     @Mock
-    MinioClient minioClient;
+    private MinioClient minioClient;
 
     @Mock
-    Environment env;
+    private Environment env;
 
-    DefaultMinioFileService fileService;
+    private DefaultMinioFileService fileService;
 
     @Before
     public void setUp() {
