@@ -1,13 +1,18 @@
 package media.mediastreamer.controller;
 
+import lombok.extern.log4j.Log4j2;
+import media.mediastreamer.exception.GenericServiceException;
 import media.mediastreamer.form.UploadForm;
 import media.mediastreamer.service.MediaService;
+import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 /**
  * Controller responsible for displaying media.
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author  Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @Controller
+@Log4j2
 public class MediaController {
 
     private FactoryBean<UploadForm> uploadFormFactory;
@@ -31,7 +37,9 @@ public class MediaController {
      * @return path to the media index page
      */
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) throws GenericServiceException {
+        model.addAttribute("files", mediaService.listFiles());
+
         return "media/index";
     }
 
@@ -63,5 +71,23 @@ public class MediaController {
         model.addAttribute("uploadForm", uploadFormFactory.getObject());
 
         return "media/upload";
+    }
+
+    /**
+     * Returns video with given name.
+     *
+     * @param name name of video
+     *
+     * @return stream of found video
+     */
+    @GetMapping("/video/{name}")
+    public StreamingResponseBody getVideo(@PathVariable("name") String name) {
+        return outputStream -> {
+            try {
+                outputStream.write(mediaService.getFile(name).readAllBytes());
+            } catch (GenericServiceException e) {
+                log.log(Level.ERROR, e.getLocalizedMessage(), e);
+            }
+        };
     }
 }

@@ -13,8 +13,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.io.InputStream;
+
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,6 +54,7 @@ public class MediaControllerTest {
     public void index() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("files"))
                 .andExpect(view().name("media/index"));
     }
 
@@ -70,6 +75,16 @@ public class MediaControllerTest {
             ).andExpect(status().isOk())
             .andExpect(view().name("media/upload"));
 
+    }
+
+    @Test
+    public void getVideo() throws Exception {
+        when(mediaService.getFile(anyString())).thenReturn(mock(InputStream.class));
+
+        mockMvc.perform(get("/video/test.mp4"))
+                .andExpect(request().asyncStarted())
+                .andDo(MvcResult::getAsyncResult)
+                .andExpect(status().isOk());
     }
 
     private MockMultipartFile getMockMultipartFile() {
