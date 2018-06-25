@@ -9,6 +9,7 @@
     <script src="/jquery/dist/jquery.min.js"></script>
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/custom/upload.js"></script>
+    <script src="/custom/video.js"></script>
 </#macro>
 
 <#macro navbar>

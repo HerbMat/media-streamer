@@ -36,6 +36,7 @@ import static org.mockito.Mockito.*;
 public class DefaultMinioFileServiceTest {
 
     private static final String TEST_BUCKET_NAME = "bucket";
+
     @Mock
     private MinioClient minioClient;
 

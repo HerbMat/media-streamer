@@ -19,7 +19,7 @@ public interface MinioFileService extends FileService {
     void createBucket(String name) throws GenericServiceException;
 
     /**
-     * Inits minio storage with default bucket.
+     * Init minio storage with default bucket.
      *
      * @throws GenericServiceException
      */

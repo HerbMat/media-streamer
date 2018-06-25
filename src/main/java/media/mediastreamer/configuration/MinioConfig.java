@@ -7,6 +7,7 @@ import media.mediastreamer.configuration.properties.MinioConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Minio configuration file.
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @EnableConfigurationProperties(MinioConfigurationProperties.class)
+@Profile({ "production", "dev" })
 public class MinioConfig {
 
     @Bean
