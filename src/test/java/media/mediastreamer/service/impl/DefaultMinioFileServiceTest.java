@@ -5,6 +5,7 @@ import io.minio.Result;
 import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
 import io.minio.messages.Owner;
+import media.mediastreamer.configuration.properties.MinioBuckets;
 import media.mediastreamer.dto.FileResult;
 import media.mediastreamer.exception.GenericServiceException;
 import org.junit.Before;
@@ -41,16 +42,15 @@ public class DefaultMinioFileServiceTest {
     private MinioClient minioClient;
 
     @Mock
-    private Environment env;
+    private MinioBuckets minioBuckets;
 
     private DefaultMinioFileService fileService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(env.getProperty(anyString())).thenReturn(TEST_BUCKET_NAME);
 
-        fileService = new DefaultMinioFileService(minioClient, env);
+        fileService = new DefaultMinioFileService(minioClient, minioBuckets);
     }
 
     @Test
@@ -154,7 +154,7 @@ public class DefaultMinioFileServiceTest {
         Owner owner = mock(Owner.class);
         Iterable<Result<Item>> mockedResults = List.of(
                 getMockResult(false, "etag1", date, "name1", 5L, owner, "storageClass1"),
-                getMockResult(true, "etag2", date, "name2", 10L, owner, "storageClass2"));
+                getMockResult(false, "etag2", date, "name2", 10L, owner, "storageClass2"));
 
         when(minioClient.listObjects(anyString())).thenReturn(mockedResults);
 

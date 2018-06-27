@@ -59,6 +59,8 @@ dependencies {
 	compile('com.google.guava:guava')
     compile("org.apache.commons:commons-collections4:${apacheCommonsCollectionVersion}")
     compile("org.apache.commons:commons-lang3:${apacheCommonsLangVersion}")
+	compile("commons-io:commons-io:2.6")
+	compile('org.bytedeco:javacv-platform:1.4.1')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
     compile("org.mapstruct:mapstruct-jdk8:${mapStructVersion}")
