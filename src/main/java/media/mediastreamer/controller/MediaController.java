@@ -4,7 +4,6 @@ import lombok.extern.log4j.Log4j2;
 import media.mediastreamer.exception.GenericServiceException;
 import media.mediastreamer.form.UploadForm;
 import media.mediastreamer.service.MediaService;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.core.io.InputStreamResource;
@@ -44,7 +43,7 @@ public class MediaController {
      */
     @GetMapping("/")
     public String index(Model model) throws GenericServiceException {
-        model.addAttribute("files", mediaService.listFiles());
+        model.addAttribute("medias", mediaService.listMedias().collectList().block());
 
         return "media/index";
     }
@@ -99,7 +98,7 @@ public class MediaController {
 
     @GetMapping("/img/{name}")
     public ResponseEntity<InputStreamResource> getImage(@PathVariable("name") String name) throws GenericServiceException {
-        InputStream inputStream = mediaService.getFile(FilenameUtils.removeExtension(name) + ".png");
+        InputStream inputStream = mediaService.getFile(name);
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(new InputStreamResource(inputStream));

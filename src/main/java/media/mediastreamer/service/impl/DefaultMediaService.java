@@ -1,19 +1,23 @@
 package media.mediastreamer.service.impl;
 
 import lombok.extern.log4j.Log4j2;
-import media.mediastreamer.dto.FileResult;
+import media.mediastreamer.domain.Media;
 import media.mediastreamer.exception.GenericServiceException;
 import media.mediastreamer.multipart.MultipartImage;
+import media.mediastreamer.processor.ImageExtractor;
+import media.mediastreamer.repositories.MediaRepository;
 import media.mediastreamer.service.FileService;
 import media.mediastreamer.service.MediaService;
 import org.apache.commons.io.FilenameUtils;
-import org.bytedeco.javacpp.opencv_core;
+import org.apache.logging.log4j.Level;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -21,8 +25,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.stream.Collectors;
 
 /**
  * Default implementation of {@link MediaService}
@@ -33,9 +35,15 @@ import java.util.stream.Collectors;
 @Log4j2
 public class DefaultMediaService implements MediaService {
     private FileService fileService;
+    private MediaRepository mediaRepository;
+    private FactoryBean<Media> mediaFactory;
+    private ImageExtractor imageExtractor;
 
-    public DefaultMediaService(FileService fileService) {
+    public DefaultMediaService(FileService fileService, MediaRepository mediaRepository, FactoryBean<Media> mediaFactory, ImageExtractor imageExtractor) {
         this.fileService = fileService;
+        this.mediaRepository = mediaRepository;
+        this.mediaFactory = mediaFactory;
+        this.imageExtractor = imageExtractor;
     }
 
     /**
@@ -45,7 +53,9 @@ public class DefaultMediaService implements MediaService {
     public void upload(MultipartFile media) throws GenericServiceException {
         fileService.putFile(media);
         try {
-            fileService.putFile(getPosterImage(media));
+            MultipartFile posterImage = imageExtractor.extractImage(media);
+            fileService.putFile(posterImage);
+            saveMediaInformation(media, posterImage);
         } catch (IOException e) {
             throw new GenericServiceException("IO exception");
         }
@@ -63,26 +73,21 @@ public class DefaultMediaService implements MediaService {
      * {@inheritDoc}
      */
     @Override
-    public Collection<String> listFiles() throws GenericServiceException {
-        return fileService.listFiles().stream()
-                .map(FileResult::getObjectName)
-                .collect(Collectors.toSet());
+    public Flux<Media> listMedias() {
+        return mediaRepository.findAll();
     }
 
-    private MultipartFile getPosterImage(MultipartFile file) throws IOException {
-        FFmpegFrameGrabber frameGrabber = new FFmpegFrameGrabber(file.getInputStream());
-        frameGrabber.start();
-        frameGrabber.setFrameNumber(frameGrabber.getLengthInFrames()/2);
-        frameGrabber.getLengthInFrames();
-        Frame posterFrame = frameGrabber.grabImage();
-        Java2DFrameConverter java2DFrameConverter = new Java2DFrameConverter();
-        BufferedImage posterImage = java2DFrameConverter.convert(posterFrame);
-        ByteArrayOutputStream tempImage = new ByteArrayOutputStream();
-        ImageIO.write(posterImage, "PNG", tempImage);
-        tempImage.close();
-        int contentLength = tempImage.size();
-
-        return new MultipartImage(FilenameUtils.removeExtension(file.getOriginalFilename()) + ".png", "image/png", contentLength, new ByteArrayInputStream(tempImage.toByteArray()));
+    private void saveMediaInformation(MultipartFile mediaFile, MultipartFile posterImage) throws GenericServiceException {
+        try {
+            Media mediaInformation = mediaFactory.getObject();
+            mediaInformation.setImgName(posterImage.getOriginalFilename());
+            mediaInformation.setMediaName(mediaFile.getOriginalFilename());
+            mediaInformation.setMediaType(media.mediastreamer.domain.MediaType.VIDEO);
+            mediaRepository.save(mediaInformation).block();
+        } catch (Exception e) {
+            log.log(Level.ERROR, e.getLocalizedMessage(), e);
+            throw new GenericServiceException(e.getLocalizedMessage(), e);
+        }
     }
 
 }
