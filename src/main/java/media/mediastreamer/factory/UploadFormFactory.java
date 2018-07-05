@@ -15,7 +15,7 @@ public class UploadFormFactory  implements FactoryBean<UploadForm> {
      * {@inheritDoc}
      */
     @Override
-    public UploadForm getObject() throws Exception {
+    public UploadForm getObject() {
         return new UploadForm();
     }
 

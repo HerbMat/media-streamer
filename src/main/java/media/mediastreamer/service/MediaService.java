@@ -35,9 +35,9 @@ public interface MediaService {
     InputStream getFile(String name) throws GenericServiceException;
 
     /**
-     * It returns collection of stored file names.
+     * It returns collection of stored medias information.
      *
-     * @return collection of all stored file names.
+     * @return collection of all stored medias information.
      *
      * @throws GenericServiceException
      */

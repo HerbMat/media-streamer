@@ -12,6 +12,8 @@ import org.springframework.data.cassandra.repository.config.EnableReactiveCassan
 import java.util.List;
 
 /**
+ * Configuration for cassandra database.
+ *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @Configuration

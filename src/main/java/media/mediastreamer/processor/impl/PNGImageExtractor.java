@@ -16,6 +16,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
+ * Default implementation of {@link ImageExtractor} for png images.
+ *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 public class PNGImageExtractor implements ImageExtractor {

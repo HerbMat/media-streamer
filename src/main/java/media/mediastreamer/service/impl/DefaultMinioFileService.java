@@ -35,6 +35,7 @@ public class DefaultMinioFileService implements MinioFileService {
 
     private static final String VIDEO_CONTENT_TYPE_PREFIX = "video";
     private static final String IMG_CONTENT_TYPE_PREFIX = "image";
+    public static final String BAD_TYPE_OF_FILE = "Bad type of file";
 
     private final MinioBuckets minioBuckets;
     private final MinioClient minioClient;
@@ -86,8 +87,8 @@ public class DefaultMinioFileService implements MinioFileService {
             putFileToBucket(file, minioBuckets.getImg());
             return;
         }
-        log.log(Level.DEBUG, "Bad type of file");
-        throw new BadFileTypeException("Bad type of file");
+        log.log(Level.DEBUG, BAD_TYPE_OF_FILE);
+        throw new BadFileTypeException(BAD_TYPE_OF_FILE);
     }
 
     /**
@@ -101,8 +102,8 @@ public class DefaultMinioFileService implements MinioFileService {
         if(FilenameUtils.getExtension(fileName).equals("png")) {
             return getFileFromBucket(fileName, minioBuckets.getImg());
         }
-        log.log(Level.DEBUG, "Bad type of file");
-        throw new BadFileTypeException("Bad type of file");
+        log.log(Level.DEBUG, BAD_TYPE_OF_FILE);
+        throw new BadFileTypeException(BAD_TYPE_OF_FILE);
     }
 
     /**

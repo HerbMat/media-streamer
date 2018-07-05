@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 /**
- * Minio configuration file.
+ * Minio configuration class.
  *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */

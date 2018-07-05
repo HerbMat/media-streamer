@@ -96,6 +96,14 @@ public class MediaController {
         };
     }
 
+    /**
+     * Returns image with given name.
+     * @param name name of image
+     *
+     * @return response entity with found image
+     *
+     * @throws GenericServiceException
+     */
     @GetMapping("/img/{name}")
     public ResponseEntity<InputStreamResource> getImage(@PathVariable("name") String name) throws GenericServiceException {
         InputStream inputStream = mediaService.getFile(name);

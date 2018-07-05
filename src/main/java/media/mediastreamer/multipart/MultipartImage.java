@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 /**
+ * Implementation of {@link MultipartFile} for images.
+ *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 public class MultipartImage implements MultipartFile {
@@ -55,12 +57,12 @@ public class MultipartImage implements MultipartFile {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() {
         return imageStream;
     }
 
     @Override
-    public void transferTo(File dest) throws IOException, IllegalStateException {
+    public void transferTo(File dest) throws IOException {
         FileCopyUtils.copy(imageStream, Files.newOutputStream(dest.toPath()));
     }
 }

@@ -7,6 +7,8 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotEmpty;
 
 /**
+ * Properties storing minio buckets names.
+ *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @Data
