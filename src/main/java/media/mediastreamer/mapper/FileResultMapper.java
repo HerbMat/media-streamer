@@ -8,6 +8,8 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 /**
+ * It maps {@link Item} to {@link FileResult}
+ *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @Mapper

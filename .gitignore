@@ -7,7 +7,6 @@
 !/src/main/resources/static/custom
 yarn-error.log
 node_modules
-src/main/resources/application.properties
 
 ### STS ###
 .apt_generated

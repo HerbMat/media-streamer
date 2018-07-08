@@ -5,15 +5,17 @@ import io.minio.Result;
 import io.minio.errors.ErrorResponseException;
 import io.minio.messages.Item;
 import io.minio.messages.Owner;
+import media.mediastreamer.configuration.properties.MinioBuckets;
 import media.mediastreamer.dto.FileResult;
+import media.mediastreamer.exception.BadFileTypeException;
 import media.mediastreamer.exception.GenericServiceException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.core.env.Environment;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -35,22 +37,24 @@ import static org.mockito.Mockito.*;
  */
 public class DefaultMinioFileServiceTest {
 
-    private static final String TEST_BUCKET_NAME = "bucket";
+    private static final String TEST_BUCKET_VIDEO = "video";
+    private static final String TEST_BUCKET_IMG = "img";
 
     @Mock
     private MinioClient minioClient;
 
     @Mock
-    private Environment env;
+    private MinioBuckets minioBuckets;
 
     private DefaultMinioFileService fileService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(env.getProperty(anyString())).thenReturn(TEST_BUCKET_NAME);
 
-        fileService = new DefaultMinioFileService(minioClient, env);
+        when(minioBuckets.getVideo()).thenReturn(TEST_BUCKET_VIDEO);
+        when(minioBuckets.getImg()).thenReturn(TEST_BUCKET_IMG);
+        fileService = new DefaultMinioFileService(minioClient, minioBuckets);
     }
 
     @Test
@@ -86,34 +90,20 @@ public class DefaultMinioFileServiceTest {
 
         fileService.init();
 
-        verify(minioClient, times(1)).bucketExists(TEST_BUCKET_NAME);
-        verify(minioClient, times(1)).makeBucket(TEST_BUCKET_NAME);
+        verify(minioClient, times(1)).bucketExists(TEST_BUCKET_VIDEO);
+        verify(minioClient, times(1)).makeBucket(TEST_BUCKET_VIDEO);
+        verify(minioClient, times(1)).bucketExists(TEST_BUCKET_IMG);
+        verify(minioClient, times(1)).makeBucket(TEST_BUCKET_IMG);
     }
 
     @Test
-    public void putFile() throws Exception {
+    public void putFileVideo() throws Exception {
+        performPutFileTest(TEST_BUCKET_VIDEO, 5L, "video.mp4", "video/mp4", "video".getBytes(), getMockMultipartVideo());
+    }
 
-        ArgumentCaptor<String> bucketNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Long> sizeCaptor = ArgumentCaptor.forClass(Long.class);
-        ArgumentCaptor<String> origFileNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<InputStream> videoFileCaptor = ArgumentCaptor.forClass(InputStream.class);
-
-        fileService.putFile(getMockMultipartFile());
-
-        verify(minioClient, times(1))
-                .putObject(
-                        bucketNameCaptor.capture(),
-                        origFileNameCaptor.capture(),
-                        videoFileCaptor.capture(),
-                        sizeCaptor.capture(),
-                        contentTypeCaptor.capture());
-
-        assertThat(bucketNameCaptor.getValue(), equalTo(TEST_BUCKET_NAME));
-        assertThat(sizeCaptor.getValue(), equalTo(5L));
-        assertThat(origFileNameCaptor.getValue(), equalTo("video.mp4"));
-        assertThat(contentTypeCaptor.getValue(), equalTo("video/mp4"));
-        assertThat(videoFileCaptor.getValue().readAllBytes(), equalTo("video".getBytes()));
+    @Test
+    public void putFileImg() throws Exception {
+        performPutFileTest(TEST_BUCKET_IMG, 5L, "img.png", "image/png", "image".getBytes(), getMockMultipartImg());
     }
 
     @Test(expected = GenericServiceException.class)
@@ -121,24 +111,30 @@ public class DefaultMinioFileServiceTest {
         doThrow(IOException.class).when(minioClient)
                 .putObject(anyString(), anyString(), any(), anyLong(), anyString());
 
-        fileService.putFile(getMockMultipartFile());
+        fileService.putFile(getMockMultipartVideo());
+    }
 
+    @Test(expected = BadFileTypeException.class)
+    public void putFileBadFileFormat() throws Exception {
+        MultipartFile badFile = mock(MultipartFile.class);
+        when(badFile.getContentType()).thenReturn("badContentType");
+
+        fileService.putFile(badFile);
     }
 
     @Test
-    public void getFile() throws Exception {
-        ArgumentCaptor<String> bucketNameCaptor = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
-        InputStream fileInputStream = mock(InputStream.class);
-        when(minioClient.getObject(anyString(), anyString())).thenReturn(fileInputStream);
+    public void getFileVideo() throws Exception {
+        performGetFileTest("video.mp4", TEST_BUCKET_VIDEO);
+    }
 
-        InputStream result = fileService.getFile("video.mp4");
+    @Test
+    public void getFileImg() throws Exception {
+        performGetFileTest("img.png", TEST_BUCKET_IMG);
+    }
 
-        verify(minioClient, times(1)).getObject(bucketNameCaptor.capture(), fileNameCaptor.capture());
-
-        assertThat(result, equalTo(fileInputStream));
-        assertThat(bucketNameCaptor.getValue(), equalTo(TEST_BUCKET_NAME));
-        assertThat(fileNameCaptor.getValue(), equalTo("video.mp4"));
+    @Test(expected = BadFileTypeException.class)
+    public void getFileBadFileFormat() throws Exception {
+        fileService.getFile("badFile.badExt");
     }
 
     @Test(expected = GenericServiceException.class)
@@ -152,9 +148,9 @@ public class DefaultMinioFileServiceTest {
     public void listFiles() throws Exception {
         Date date = mock(Date.class);
         Owner owner = mock(Owner.class);
-        Iterable<Result<Item>> mockedResults = List.of(
+        List<Result<Item>> mockedResults = List.of(
                 getMockResult(false, "etag1", date, "name1", 5L, owner, "storageClass1"),
-                getMockResult(true, "etag2", date, "name2", 10L, owner, "storageClass2"));
+                getMockResult(false, "etag2", date, "name2", 10L, owner, "storageClass2"));
 
         when(minioClient.listObjects(anyString())).thenReturn(mockedResults);
 
@@ -163,7 +159,7 @@ public class DefaultMinioFileServiceTest {
         assertThat(fileResults, not(nullValue()));
         assertThat(fileResults, hasSize(2));
 
-        Iterator<Result<Item>> resultIterator = mockedResults.iterator();
+        Iterator<Result<Item>> resultIterator = mockedResults.listIterator();
         Item item;
         for (FileResult fileResult : fileResults) {
             item = resultIterator.next().get();
@@ -231,7 +227,51 @@ public class DefaultMinioFileServiceTest {
         return itemResult;
     }
 
-    private MockMultipartFile getMockMultipartFile() {
+    private MockMultipartFile getMockMultipartVideo() {
         return new MockMultipartFile("video", "video.mp4", "video/mp4", "video".getBytes());
+    }
+
+    private MockMultipartFile getMockMultipartImg() {
+        return new MockMultipartFile("img", "img.png", "image/png", "image".getBytes());
+    }
+
+    private void performPutFileTest(
+            String bucketName, long fileSize, String fileName, String contentType, byte[] fileContent, MultipartFile file) throws Exception {
+        ArgumentCaptor<String> bucketNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Long> sizeCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<String> origFileNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> contentTypeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<InputStream> videoFileCaptor = ArgumentCaptor.forClass(InputStream.class);
+
+        fileService.putFile(file);
+
+        verify(minioClient, times(1))
+                .putObject(
+                        bucketNameCaptor.capture(),
+                        origFileNameCaptor.capture(),
+                        videoFileCaptor.capture(),
+                        sizeCaptor.capture(),
+                        contentTypeCaptor.capture());
+
+        assertThat(bucketNameCaptor.getValue(), equalTo(bucketName));
+        assertThat(sizeCaptor.getValue(), equalTo(fileSize));
+        assertThat(origFileNameCaptor.getValue(), equalTo(fileName));
+        assertThat(contentTypeCaptor.getValue(), equalTo(contentType));
+        assertThat(videoFileCaptor.getValue().readAllBytes(), equalTo(fileContent));
+    }
+
+    private void performGetFileTest(String fileName, String bucketName) throws Exception {
+        ArgumentCaptor<String> bucketNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> fileNameCaptor = ArgumentCaptor.forClass(String.class);
+        InputStream fileInputStream = mock(InputStream.class);
+        when(minioClient.getObject(anyString(), anyString())).thenReturn(fileInputStream);
+
+        InputStream result = fileService.getFile(fileName);
+
+        verify(minioClient, times(1)).getObject(bucketNameCaptor.capture(), fileNameCaptor.capture());
+
+        assertThat(result, equalTo(fileInputStream));
+        assertThat(bucketNameCaptor.getValue(), equalTo(bucketName));
+        assertThat(fileNameCaptor.getValue(), equalTo(fileName));
     }
 }

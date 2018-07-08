@@ -1,22 +1,22 @@
 package media.mediastreamer.factory;
 
-import media.mediastreamer.form.UploadForm;
+import media.mediastreamer.domain.Media;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Factory for creating {@link UploadForm} objects
+ * Factory for creating {@link Media} objects
  *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
-public class UploadFormFactory  implements FactoryBean<UploadForm> {
+public class MediaFactory implements FactoryBean<Media> {
 
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public UploadForm getObject() {
-        return new UploadForm();
+    public Media getObject() {
+        return new Media();
     }
 
     /**
@@ -24,6 +24,6 @@ public class UploadFormFactory  implements FactoryBean<UploadForm> {
      */
     @Override
     public Class<?> getObjectType() {
-        return UploadForm.class;
+        return Media.class;
     }
 }

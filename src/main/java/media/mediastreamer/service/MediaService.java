@@ -1,10 +1,11 @@
 package media.mediastreamer.service;
 
+import media.mediastreamer.domain.Media;
 import media.mediastreamer.exception.GenericServiceException;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
 
 import java.io.InputStream;
-import java.util.Collection;
 
 /**
  * Service responsible for basic operations on media file.
@@ -34,11 +35,11 @@ public interface MediaService {
     InputStream getFile(String name) throws GenericServiceException;
 
     /**
-     * It returns collection of stored file names.
+     * It returns collection of stored medias information.
      *
-     * @return collection of all stored file names.
+     * @return collection of all stored medias information.
      *
      * @throws GenericServiceException
      */
-    Collection<String> listFiles() throws GenericServiceException;
+    Flux<Media> listMedias() throws GenericServiceException;
 }

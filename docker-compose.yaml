@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  minio:
+    image: minio/minio
+    ports:
+      - "127.0.0.1:9000:9000"
+    volumes:
+      - "/data"
+    environment:
+      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+      MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+    command: server /data
+
+  cassandra:
+    image: cassandra:latest
+    ports:
+      - "127.0.0.1:9042:9042"

@@ -1,14 +1,14 @@
-$(document).ready(function(){
-    $("#modal1").on("hidden.bs.modal", function (e) {
-        // do something...
-        $("#modal1 iframe").attr("src", $("#modal1 iframe").attr("src"));
-    });
-    $("#modal6").on("hidden.bs.modal", function (e) {
-        // do something...
-        $("#modal6 iframe").attr("src", $("#modal6 iframe").attr("src"));
-    });
-    $("#modal4").on("hidden.bs.modal", function (e) {
-        // do something...
-        $("#modal4 iframe").attr("src", $("#modal4 iframe").attr("src"));
+$(document).ready(function() {
+    function drawPoster(video) {
+        let canvas = document.createElement("canvas");
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        let videoId = $(video).attr("id");
+        $( "#img-" + videoId).attr("src",canvas.toDataURL());
+    }
+    $("video").on("pause", function() {
+        drawPoster(this);
     });
 });

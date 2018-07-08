@@ -1,7 +1,11 @@
 package media.mediastreamer.service.impl;
 
-import media.mediastreamer.dto.FileResult;
+import media.mediastreamer.domain.Media;
+import media.mediastreamer.domain.MediaType;
 import media.mediastreamer.exception.GenericServiceException;
+import media.mediastreamer.factory.MediaFactory;
+import media.mediastreamer.processor.ImageExtractor;
+import media.mediastreamer.repositories.MediaRepository;
 import media.mediastreamer.service.FileService;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,14 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -29,6 +32,15 @@ public class DefaultMediaServiceTest {
     @Mock
     private FileService fileService;
 
+    @Mock
+    private ImageExtractor imageExtractor;
+
+    @Mock
+    private MediaRepository mediaRepository;
+
+    @Mock
+    private MediaFactory mediaFactory;
+
     @InjectMocks
     private DefaultMediaService mediaService;
 
@@ -38,15 +50,53 @@ public class DefaultMediaServiceTest {
     }
 
     @Test
-    public void upload() throws GenericServiceException {
-        mediaService.upload(mock(MultipartFile.class));
+    public void upload() throws Exception {
+        MultipartFile imgFile = mock(MultipartFile.class);
+        MultipartFile videoFile = mock(MultipartFile.class);
+        when(imgFile.getOriginalFilename()).thenReturn("img.png");
+        when(videoFile.getOriginalFilename()).thenReturn("video.mp4");
 
-        verify(fileService, times(1)).putFile(any(MultipartFile.class));
+        when(imageExtractor.extractImage(any(MultipartFile.class))).thenReturn(imgFile);
+        Media media = mock(Media.class);
+        when(mediaFactory.getObject()).thenReturn(media);
+        when(mediaRepository.save(any(Media.class))).thenReturn(Mono.just(media));
+
+        mediaService.upload(videoFile);
+
+        verify(fileService, times(1)).putFile(videoFile);
+        verify(fileService, times(1)).putFile(imgFile);
+        verify(media, times(1)).setImgName("img.png");
+        verify(media, times(1)).setMediaName("video.mp4");
+        verify(media, times(1)).setMediaType(MediaType.VIDEO);
+        verify(mediaRepository, times(1)).save(media);
     }
 
     @Test(expected = GenericServiceException.class)
     public void uploadFails() throws GenericServiceException {
         doThrow(GenericServiceException.class).when(fileService).putFile(any());
+
+        mediaService.upload(mock(MultipartFile.class));
+    }
+
+    @Test(expected = GenericServiceException.class)
+    public void uploadExtactImgFails() throws Exception {
+        when(imageExtractor.extractImage(any())).thenThrow(IOException.class);
+
+        mediaService.upload(mock(MultipartFile.class));
+    }
+
+    @Test(expected = GenericServiceException.class)
+    public void uploadSaveMediaDataFails() throws Exception {
+        MultipartFile imgFile = mock(MultipartFile.class);
+        MultipartFile videoFile = mock(MultipartFile.class);
+        when(imgFile.getOriginalFilename()).thenReturn("img.png");
+        when(videoFile.getOriginalFilename()).thenReturn("video.mp4");
+
+        when(imageExtractor.extractImage(any(MultipartFile.class))).thenReturn(imgFile);
+        Media media = mock(Media.class);
+        when(mediaFactory.getObject()).thenReturn(media);
+
+        when(mediaRepository.save(any())).thenThrow(IllegalArgumentException.class);
 
         mediaService.upload(mock(MultipartFile.class));
     }
@@ -69,22 +119,13 @@ public class DefaultMediaServiceTest {
     }
 
     @Test
-    public void listFiles() throws GenericServiceException {
+    public void listFiles() {
 
-        Collection<FileResult> fileResults = List.of(mockFileResult("test.mp4"), mockFileResult("video.mp4"));
-        when(fileService.listFiles()).thenReturn(fileResults);
+        Flux<Media> mediaFlux = mock(Flux.class);
+        when(mediaRepository.findAll()).thenReturn(mediaFlux);
 
-        Collection<String> fileNames = mediaService.listFiles();
+        Flux<Media> result = mediaService.listMedias();
 
-        assertThat(fileNames, hasSize(2));
-        assertThat(fileNames, hasItem("test.mp4"));
-        assertThat(fileNames, hasItem("video.mp4"));
-    }
-
-    private FileResult mockFileResult(String name) {
-        FileResult fileResult = mock(FileResult.class);
-        when(fileResult.getObjectName()).thenReturn(name);
-
-        return fileResult;
+        assertThat(result, equalTo(mediaFlux));
     }
 }

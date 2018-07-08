@@ -10,4 +10,8 @@ public class GenericServiceException extends Exception {
     public GenericServiceException(String localizedMessage, Exception ex) {
         super(localizedMessage, ex);
     }
+
+    public GenericServiceException(String message) {
+        super(message);
+    }
 }
