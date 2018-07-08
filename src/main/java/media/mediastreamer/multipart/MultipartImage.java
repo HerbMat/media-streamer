@@ -14,10 +14,10 @@ import java.nio.file.Files;
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 public class MultipartImage implements MultipartFile {
-    String fileName;
-    String contentType;
-    long size;
-    InputStream imageStream;
+    private String fileName;
+    private String contentType;
+    private long size;
+    private InputStream imageStream;
 
     public MultipartImage(String fileName, String contentType, long size, InputStream imageStream) {
         this.fileName = fileName;

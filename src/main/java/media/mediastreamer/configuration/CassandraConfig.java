@@ -21,7 +21,7 @@ import java.util.List;
 @Profile({ "production", "dev" })
 public class CassandraConfig extends AbstractReactiveCassandraConfiguration {
 
-    CassandraProperties cassandraProperties;
+    private CassandraProperties cassandraProperties;
 
     public CassandraConfig(CassandraProperties cassandraProperties) {
         this.cassandraProperties = cassandraProperties;

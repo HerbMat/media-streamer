@@ -19,7 +19,7 @@
                             <div class="modal-body mb-0 p-0">
                                 <div class="embed-responsive embed-responsive-16by9 z-depth-1-half">
                                     <video id="video-${index}" controls preload="metadata" >
-                                        <source class="embed-responsive-item" src="/video/${media.mediaName}" type="video/mp4">
+                                        <source class="embed-responsive-item" src="<@spring.url '/video/${media.mediaName}'/>" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>
                                 </div>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 <!--Modal: Name-->
-                <a><img class="img-fluid z-depth-1" src="/img/${media.imgName}" id="img-video-${index}" alt="video" data-toggle="modal" data-target="#modal-${index}"></a>
+                <a><img class="img-fluid z-depth-1" src="<@spring.url '/img/${media.imgName}'/>" id="img-video-${index}" alt="video" data-toggle="modal" data-target="#modal-${index}"></a>
                 <#assign index++>
             </div>
         </#list>

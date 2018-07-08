@@ -1,10 +1,8 @@
 package media.mediastreamer.controller;
 
-import javafx.beans.binding.When;
 import media.mediastreamer.MediaStreamerApplicationTests;
 import media.mediastreamer.domain.Media;
 import media.mediastreamer.form.UploadForm;
-import media.mediastreamer.repositories.MediaRepository;
 import media.mediastreamer.service.MediaService;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import reactor.core.publisher.Flux;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import static org.mockito.ArgumentMatchers.anyString;
@@ -97,16 +96,14 @@ public class MediaControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @Test
-//    public void getImg() throws Exception {
-//        when(mediaService.getFile(anyString())).thenReturn(mock(InputStream.class));
-//
-//        mockMvc.perform(get("/img/test.png"))
-//                .andExpect(request().asyncStarted())
-//                .andDo(MvcResult::getAsyncResult)
-//                .andExpect(content().contentType(MediaType.IMAGE_PNG_VALUE))
-//                .andExpect(status().isOk());
-//    }
+    @Test
+    public void getImg() throws Exception {
+        when(mediaService.getFile(anyString())).thenReturn(new ByteArrayInputStream("test".getBytes()));
+
+        mockMvc.perform(get("/img/test.png"))
+                .andExpect(content().contentType(MediaType.IMAGE_PNG_VALUE))
+                .andExpect(status().isOk());
+    }
 
     private MockMultipartFile getMockMultipartFile() {
         return new MockMultipartFile("video", "video.mp4", "video/mp4", "video".getBytes());

@@ -5,11 +5,11 @@
 </#macro>
 
 <#macro header_links>
-    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
-    <script src="/jquery/dist/jquery.min.js"></script>
-    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="/custom/upload.js"></script>
-    <script src="/custom/video.js"></script>
+    <link rel="stylesheet" href="<@spring.url '/bootstrap/dist/css/bootstrap.min.css'/>">
+    <script src="<@spring.url '/jquery/dist/jquery.min.js'/>"></script>
+    <script src="<@spring.url '/bootstrap/dist/js/bootstrap.min.js'/>"></script>
+    <script src="<@spring.url '/custom/upload.js'/>"></script>
+    <script src="<@spring.url '/custom/video.js'/>"></script>
 </#macro>
 
 <#macro navbar>
@@ -20,10 +20,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#"><@spring.messageText "home.link" "Home"/><span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="<@spring.url '/'/>"><@spring.messageText "home.link" "Home"/><span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
+                <a class="nav-link" href="<@spring.url '/upload'/>"><@spring.messageText "upload.link" "Upload"/></a>
             </li>
         </ul>
     </div>

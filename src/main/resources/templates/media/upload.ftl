@@ -5,7 +5,6 @@
 <#macro page_body>
     <div class="container text-center">
         <h1>Upload file</h1>
-    <#--<@spring.bind "uploadForm" />-->
         <form action="<@spring.url '/upload'/>" method="post" name="uploadForm" enctype="multipart/form-data">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <div class="custom-file">

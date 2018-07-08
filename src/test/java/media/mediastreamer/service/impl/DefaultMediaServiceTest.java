@@ -33,13 +33,13 @@ public class DefaultMediaServiceTest {
     private FileService fileService;
 
     @Mock
-    ImageExtractor imageExtractor;
+    private ImageExtractor imageExtractor;
 
     @Mock
-    MediaRepository mediaRepository;
+    private MediaRepository mediaRepository;
 
     @Mock
-    MediaFactory mediaFactory;
+    private MediaFactory mediaFactory;
 
     @InjectMocks
     private DefaultMediaService mediaService;

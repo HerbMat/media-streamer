@@ -148,7 +148,7 @@ public class DefaultMinioFileServiceTest {
     public void listFiles() throws Exception {
         Date date = mock(Date.class);
         Owner owner = mock(Owner.class);
-        Iterable<Result<Item>> mockedResults = List.of(
+        List<Result<Item>> mockedResults = List.of(
                 getMockResult(false, "etag1", date, "name1", 5L, owner, "storageClass1"),
                 getMockResult(false, "etag2", date, "name2", 10L, owner, "storageClass2"));
 
@@ -159,7 +159,7 @@ public class DefaultMinioFileServiceTest {
         assertThat(fileResults, not(nullValue()));
         assertThat(fileResults, hasSize(2));
 
-        Iterator<Result<Item>> resultIterator = mockedResults.iterator();
+        Iterator<Result<Item>> resultIterator = mockedResults.listIterator();
         Item item;
         for (FileResult fileResult : fileResults) {
             item = resultIterator.next().get();

@@ -17,15 +17,15 @@ import java.util.UUID;
 @Data
 public class Media {
 
-    public Media() {
-        this.id = UUID.randomUUID();
-    }
-
     @PrimaryKey
     @CassandraType(type = DataType.Name.UUID)
     private UUID id;
 
-    String mediaName;
-    String imgName;
-    MediaType mediaType;
+    private String mediaName;
+    private String imgName;
+    private MediaType mediaType;
+
+    public Media() {
+        this.id = UUID.randomUUID();
+    }
 }
