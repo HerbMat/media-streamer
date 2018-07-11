@@ -91,6 +91,7 @@ public class MediaController {
             try {
                 outputStream.write(mediaService.getFile(name).readAllBytes());
             } catch (GenericServiceException e) {
+                outputStream.close();
                 log.log(Level.ERROR, e.getLocalizedMessage(), e);
             }
         };

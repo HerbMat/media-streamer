@@ -8,8 +8,7 @@
     <link rel="stylesheet" href="<@spring.url '/bootstrap/dist/css/bootstrap.min.css'/>">
     <script src="<@spring.url '/jquery/dist/jquery.min.js'/>"></script>
     <script src="<@spring.url '/bootstrap/dist/js/bootstrap.min.js'/>"></script>
-    <script src="<@spring.url '/custom/upload.js'/>"></script>
-    <script src="<@spring.url '/custom/video.js'/>"></script>
+    <script src="<@spring.url '/custom/app.js'/>"></script>
 </#macro>
 
 <#macro navbar>
@@ -47,9 +46,9 @@
             <main role="main" class="container">
                 <@page_body/>
             </main>
-            <footer class="page-footer font-small blue pt-4 mt-4">
-                <div class="footer-copyright text-center py-3">© 2018 Copyright:
-                    <a href="https://mdbootstrap.com/bootstrap-tutorial/"> MDBootstrap.com</a>
+            <footer class="page-footer font-small blue pt-4 mt-4 text-center">
+                <div class="footer-copyright py-3">© 2018 Copyright:
+                    <a href="https://mdbootstrap.com/bootstrap-tutorial/"> Mateusz Kozłowski</a>
                 </div>
             </footer>
         </body>

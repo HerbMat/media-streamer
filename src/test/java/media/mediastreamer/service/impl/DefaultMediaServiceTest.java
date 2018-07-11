@@ -41,20 +41,24 @@ public class DefaultMediaServiceTest {
     @Mock
     private MediaFactory mediaFactory;
 
+    @Mock
+    private MultipartFile videoFile;
+
     @InjectMocks
     private DefaultMediaService mediaService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        when(videoFile.getContentType()).thenReturn("video/mp4");
+        when(videoFile.getOriginalFilename()).thenReturn("media.mp4");
     }
 
     @Test
     public void upload() throws Exception {
         MultipartFile imgFile = mock(MultipartFile.class);
-        MultipartFile videoFile = mock(MultipartFile.class);
         when(imgFile.getOriginalFilename()).thenReturn("img.png");
-        when(videoFile.getOriginalFilename()).thenReturn("video.mp4");
 
         when(imageExtractor.extractImage(any(MultipartFile.class))).thenReturn(imgFile);
         Media media = mock(Media.class);
@@ -66,7 +70,7 @@ public class DefaultMediaServiceTest {
         verify(fileService, times(1)).putFile(videoFile);
         verify(fileService, times(1)).putFile(imgFile);
         verify(media, times(1)).setImgName("img.png");
-        verify(media, times(1)).setMediaName("video.mp4");
+        verify(media, times(1)).setMediaName("media.mp4");
         verify(media, times(1)).setMediaType(MediaType.VIDEO);
         verify(mediaRepository, times(1)).save(media);
     }
@@ -75,22 +79,28 @@ public class DefaultMediaServiceTest {
     public void uploadFails() throws GenericServiceException {
         doThrow(GenericServiceException.class).when(fileService).putFile(any());
 
-        mediaService.upload(mock(MultipartFile.class));
+        mediaService.upload(videoFile);
+    }
+
+    @Test(expected = GenericServiceException.class)
+    public void uploadFailsBadContentType() throws GenericServiceException {
+       when(videoFile.getContentType()).thenReturn("");
+
+        mediaService.upload(videoFile);
     }
 
     @Test(expected = GenericServiceException.class)
     public void uploadExtactImgFails() throws Exception {
         when(imageExtractor.extractImage(any())).thenThrow(IOException.class);
 
-        mediaService.upload(mock(MultipartFile.class));
+        mediaService.upload(videoFile);
     }
 
     @Test(expected = GenericServiceException.class)
     public void uploadSaveMediaDataFails() throws Exception {
         MultipartFile imgFile = mock(MultipartFile.class);
-        MultipartFile videoFile = mock(MultipartFile.class);
         when(imgFile.getOriginalFilename()).thenReturn("img.png");
-        when(videoFile.getOriginalFilename()).thenReturn("video.mp4");
+
 
         when(imageExtractor.extractImage(any(MultipartFile.class))).thenReturn(imgFile);
         Media media = mock(Media.class);

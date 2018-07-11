@@ -24,11 +24,11 @@ public interface MediaService {
     void upload(MultipartFile media) throws GenericServiceException;
 
     /**
-     * It returns video with given name.
+     * It returns media with given name.
      *
-     * @param name name of video
+     * @param name name of media
      *
-     * @return input stream of found video
+     * @return input stream of found media
      *
      * @throws GenericServiceException
      */
