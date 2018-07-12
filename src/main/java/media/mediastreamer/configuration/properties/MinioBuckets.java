@@ -15,9 +15,7 @@ import javax.validation.constraints.NotEmpty;
 @ConfigurationProperties(prefix = "minio.bucket")
 @Validated
 public class MinioBuckets {
-    @NotEmpty
-    private String video;
 
     @NotEmpty
-    private String img;
+    private String media;
 }

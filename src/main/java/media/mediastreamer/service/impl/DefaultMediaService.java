@@ -11,10 +11,12 @@ import org.apache.logging.log4j.Level;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 /**
  * Default implementation of {@link MediaService}
@@ -43,11 +45,16 @@ public class DefaultMediaService implements MediaService {
     public void upload(MultipartFile media) throws GenericServiceException {
         fileService.putFile(media);
         try {
-            MultipartFile posterImage = imageExtractor.extractImage(media);
-            fileService.putFile(posterImage);
-            saveMediaInformation(media, posterImage);
-        } catch (IOException e) {
-            throw new GenericServiceException("IO exception");
+            if (Optional.ofNullable(media.getContentType()).orElse("").contains("video")) {
+                MultipartFile posterImage = imageExtractor.extractImage(media);
+                fileService.putFile(posterImage);
+                saveMediaInformation(media, posterImage);
+                return;
+            }
+            throw new MissingServletRequestPartException("No content type");
+        } catch (IOException|MissingServletRequestPartException e) {
+            log.log(Level.ERROR, e.getLocalizedMessage());
+            throw new GenericServiceException(e.getMessage(), e);
         }
     }
 

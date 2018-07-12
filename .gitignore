@@ -4,9 +4,10 @@
 /src/main/resources/static/*
 !/src/main/resources/static/.yarn-integrity
 !/src/main/resources/static/package.json
-!/src/main/resources/static/custom
+!/src/main/resources/static/custom/js
 yarn-error.log
 node_modules
+package-lock.json
 
 ### STS ###
 .apt_generated
