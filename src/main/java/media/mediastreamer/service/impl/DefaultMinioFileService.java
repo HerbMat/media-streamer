@@ -18,9 +18,8 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Default implementation of {@link MinioFileService}
@@ -96,10 +95,10 @@ public class DefaultMinioFileService implements MinioFileService {
     public Collection<FileResult> listFiles() throws GenericServiceException {
         try {
             Iterable<Result<Item>> itemResults = minioClient.listObjects(minioBuckets.getMedia());
-            Set<FileResult> fileResultSet = new HashSet<>();
-            itemResults.forEach(itemResult -> addItemToFileResultSet(itemResult, fileResultSet));
+            Collection<FileResult> fileResults = new ArrayList<>();
+            itemResults.forEach(itemResult -> addItemToFileResultCollection(itemResult, fileResults));
 
-            return fileResultSet;
+            return fileResults;
         } catch (XmlPullParserException e) {
             log.log(Level.ERROR, e.getMessage());
             throw new GenericServiceException(e.getLocalizedMessage(), e);
@@ -115,9 +114,9 @@ public class DefaultMinioFileService implements MinioFileService {
         }
     }
 
-    private void addItemToFileResultSet(Result<Item> itemResult, Set<FileResult> fileResultSet) {
+    private void addItemToFileResultCollection(Result<Item> itemResult, Collection<FileResult> fileResults) {
         try {
-            fileResultSet.add(FileResultMapper.INSTANCE.itemToFileResult(itemResult.get()));
+            fileResults.add(FileResultMapper.INSTANCE.itemToFileResult(itemResult.get()));
         }   catch (MinioException | GeneralSecurityException | XmlPullParserException | IOException e) {
             log.log(Level.ERROR, e.getMessage());
         }
