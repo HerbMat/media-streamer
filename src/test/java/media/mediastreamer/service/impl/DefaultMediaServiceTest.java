@@ -3,6 +3,7 @@ package media.mediastreamer.service.impl;
 import media.mediastreamer.domain.Media;
 import media.mediastreamer.domain.MediaType;
 import media.mediastreamer.exception.GenericServiceException;
+import media.mediastreamer.factory.ImageExtractorFactory;
 import media.mediastreamer.factory.MediaFactory;
 import media.mediastreamer.processor.ImageExtractor;
 import media.mediastreamer.repositories.MediaRepository;
@@ -36,6 +37,9 @@ public class DefaultMediaServiceTest {
     private ImageExtractor imageExtractor;
 
     @Mock
+    private ImageExtractorFactory imageExtractorFactory;
+
+    @Mock
     private MediaRepository mediaRepository;
 
     @Mock
@@ -53,6 +57,7 @@ public class DefaultMediaServiceTest {
 
         when(videoFile.getContentType()).thenReturn("video/mp4");
         when(videoFile.getOriginalFilename()).thenReturn("media.mp4");
+        when(imageExtractorFactory.getExtractorForMediaType(any(MediaType.class))).thenReturn(imageExtractor);
     }
 
     @Test

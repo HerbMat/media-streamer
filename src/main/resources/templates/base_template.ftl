@@ -6,8 +6,9 @@
 
 <#macro header_links>
     <link rel="stylesheet" href="<@spring.url '/bootstrap/dist/css/bootstrap.min.css'/>">
+    <link rel="stylesheet" href="<@spring.url '/custom/css/img.css'/>">
     <script src="<@spring.url '/jquery/dist/jquery.min.js'/>"></script>
-    <script src="<@spring.url '/bootstrap/dist/js/bootstrap.min.js'/>"></script>
+    <script src="<@spring.url '/bootstrap/dist/js/bootstrap.bundle.min.js'/>"></script>
     <script src="<@spring.url '/custom/app.js'/>"></script>
 </#macro>
 
@@ -30,7 +31,6 @@
 
 <#macro page_body>
     <h1><@spring.messageText "home.title" "Welcome!"/></h1>
-    <button class="btn btn-primary" type="button" href="#">TEST</button>
 </#macro>
 
 <#macro page_template>
@@ -48,7 +48,7 @@
             </main>
             <footer class="page-footer font-small blue pt-4 mt-4 text-center">
                 <div class="footer-copyright py-3">© 2018 Copyright:
-                    <a href="https://mdbootstrap.com/bootstrap-tutorial/"> Mateusz Kozłowski</a>
+                    <a href="#"> Mateusz Kozłowski</a>
                 </div>
             </footer>
         </body>

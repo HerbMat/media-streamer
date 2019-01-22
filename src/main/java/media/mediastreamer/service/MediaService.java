@@ -42,4 +42,22 @@ public interface MediaService {
      * @throws GenericServiceException
      */
     Flux<Media> listMedias() throws GenericServiceException;
+
+    /**
+     * It returns collection of stored video files.
+     *
+     * @return collection of all stored videos information.
+     *
+     * @throws GenericServiceException
+     */
+    Flux<Media> listVideos() throws GenericServiceException;
+
+    /**
+     * It returns collection of stored music files.
+     *
+     * @return collection of all stored songs information.
+     *
+     * @throws GenericServiceException
+     */
+    Flux<Media> listMusic() throws GenericServiceException;
 }

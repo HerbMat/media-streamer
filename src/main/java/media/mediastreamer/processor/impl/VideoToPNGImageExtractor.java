@@ -20,7 +20,7 @@ import java.io.IOException;
  *
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
-public class PNGImageExtractor implements ImageExtractor {
+public class VideoToPNGImageExtractor implements ImageExtractor {
 
     @Override
     public MultipartFile extractImage(MultipartFile file) throws IOException {
@@ -37,6 +37,5 @@ public class PNGImageExtractor implements ImageExtractor {
         int contentLength = tempImage.size();
 
         return new MultipartImage(FilenameUtils.removeExtension(file.getOriginalFilename()) + ".png", MediaType.IMAGE_PNG_VALUE, contentLength, new ByteArrayInputStream(tempImage.toByteArray()));
-
     }
 }
