@@ -43,7 +43,8 @@ public class MediaController {
      */
     @GetMapping("/")
     public String index(Model model) throws GenericServiceException {
-        model.addAttribute("medias", mediaService.listMedias().collectList().block());
+        model.addAttribute("videos", mediaService.listVideos().collectList().block());
+        model.addAttribute("songs", mediaService.listMusic().collectList().block());
 
         return "media/index";
     }
@@ -85,8 +86,8 @@ public class MediaController {
      *
      * @return stream of found video
      */
-    @GetMapping("/video/{name}")
-    public StreamingResponseBody getVideo(@PathVariable("name") String name) {
+    @GetMapping("/media/{name}")
+    public StreamingResponseBody getMedia(@PathVariable("name") String name) {
         return outputStream -> {
             try {
                 outputStream.write(mediaService.getFile(name).readAllBytes());

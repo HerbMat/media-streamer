@@ -59,11 +59,13 @@ public class MediaControllerTest {
 
     @Test
     public void index() throws Exception {
-        when(mediaService.listMedias()).thenReturn(Flux.just(mock(Media.class)));
+        when(mediaService.listVideos()).thenReturn(Flux.just(mock(Media.class)));
+        when(mediaService.listMusic()).thenReturn(Flux.just(mock(Media.class)));
 
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("medias"))
+                .andExpect(model().attributeExists("videos"))
+                .andExpect(model().attributeExists("songs"))
                 .andExpect(view().name("media/index"));
     }
 
@@ -90,7 +92,7 @@ public class MediaControllerTest {
     public void getVideo() throws Exception {
         when(mediaService.getFile(anyString())).thenReturn(mock(InputStream.class));
 
-        mockMvc.perform(get("/video/test.mp4"))
+        mockMvc.perform(get("/media/test.mp4"))
                 .andExpect(request().asyncStarted())
                 .andDo(MvcResult::getAsyncResult)
                 .andExpect(status().isOk());
