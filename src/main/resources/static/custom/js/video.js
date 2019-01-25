@@ -11,4 +11,8 @@ $(document).ready(function() {
     $("video").on("pause", function() {
         drawPoster(this);
     });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 });

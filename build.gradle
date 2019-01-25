@@ -9,6 +9,7 @@ buildscript {
 		mavenCentral()
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
+		maven { url "http://beckchr.github.com/ithaka-maven/mvnrepo/"}
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -31,6 +32,7 @@ repositories {
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
     maven { url "https://repo.spring.io/milestone" }
+	maven { url "http://beckchr.github.com/ithaka-maven/mvnrepo/"}
 }
 
 task wrapper(type: Wrapper) {
@@ -64,6 +66,7 @@ dependencies {
 	compile("commons-io:commons-io:${commonsIoVersion}")
 	compile("org.bytedeco:javacv-platform:${javaCvVersion}")
     compile('org.springframework.boot:spring-boot-starter-data-cassandra-reactive')
+	compile('de.odysseus.ithaka:ithaka-audioinfo:1.0')
 	runtime('org.springframework.boot:spring-boot-devtools')
 	compileOnly('org.projectlombok:lombok')
     compile("org.mapstruct:mapstruct-jdk8:${mapStructVersion}")

@@ -2,8 +2,9 @@ package media.mediastreamer.service.impl;
 
 import lombok.extern.log4j.Log4j2;
 import media.mediastreamer.domain.Media;
+import media.mediastreamer.domain.MediaType;
 import media.mediastreamer.exception.GenericServiceException;
-import media.mediastreamer.processor.ImageExtractor;
+import media.mediastreamer.factory.ImageExtractorFactory;
 import media.mediastreamer.repositories.MediaRepository;
 import media.mediastreamer.service.FileService;
 import media.mediastreamer.service.MediaService;
@@ -29,13 +30,18 @@ public class DefaultMediaService implements MediaService {
     private FileService fileService;
     private MediaRepository mediaRepository;
     private FactoryBean<Media> mediaFactory;
-    private ImageExtractor imageExtractor;
+    private ImageExtractorFactory imageExtractorFactory;
 
-    public DefaultMediaService(FileService fileService, MediaRepository mediaRepository, FactoryBean<Media> mediaFactory, ImageExtractor imageExtractor) {
+    public DefaultMediaService(
+            FileService fileService,
+            MediaRepository mediaRepository,
+            FactoryBean<Media> mediaFactory,
+            ImageExtractorFactory imageExtractorFactory
+    ) {
         this.fileService = fileService;
         this.mediaRepository = mediaRepository;
         this.mediaFactory = mediaFactory;
-        this.imageExtractor = imageExtractor;
+        this.imageExtractorFactory = imageExtractorFactory;
     }
 
     /**
@@ -45,10 +51,13 @@ public class DefaultMediaService implements MediaService {
     public void upload(MultipartFile media) throws GenericServiceException {
         fileService.putFile(media);
         try {
-            if (Optional.ofNullable(media.getContentType()).orElse("").contains("video")) {
-                MultipartFile posterImage = imageExtractor.extractImage(media);
-                fileService.putFile(posterImage);
-                saveMediaInformation(media, posterImage);
+            String contentType = Optional.ofNullable(media.getContentType()).orElse("");
+            if (contentType.contains("video")) {
+                processFile(media, MediaType.VIDEO);
+                return;
+            }
+            if (contentType.contains("audio")) {
+                processFile(media, MediaType.MUSIC);
                 return;
             }
             throw new MissingServletRequestPartException("No content type");
@@ -74,12 +83,28 @@ public class DefaultMediaService implements MediaService {
         return mediaRepository.findAll();
     }
 
-    private void saveMediaInformation(MultipartFile mediaFile, MultipartFile posterImage) throws GenericServiceException {
+    @Override
+    public Flux<Media> listVideos() {
+        return mediaRepository.findAllByMediaType(MediaType.VIDEO);
+    }
+
+    @Override
+    public Flux<Media> listMusic() {
+        return mediaRepository.findAllByMediaType(MediaType.MUSIC);
+    }
+
+    private void processFile(MultipartFile file, MediaType mediaType) throws IOException, GenericServiceException {
+        MultipartFile posterImage = imageExtractorFactory.getExtractorForMediaType(mediaType).extractImage(file);
+        fileService.putFile(posterImage);
+        saveMediaInformation(file, posterImage, mediaType);
+    }
+
+    private void saveMediaInformation(MultipartFile mediaFile, MultipartFile posterImage, MediaType mediaType) throws GenericServiceException {
         try {
             Media mediaInformation = mediaFactory.getObject();
             mediaInformation.setImgName(posterImage.getOriginalFilename());
             mediaInformation.setMediaName(mediaFile.getOriginalFilename());
-            mediaInformation.setMediaType(media.mediastreamer.domain.MediaType.VIDEO);
+            mediaInformation.setMediaType(mediaType);
             mediaRepository.save(mediaInformation).block();
         } catch (Exception e) {
             log.log(Level.ERROR, e.getLocalizedMessage(), e);
