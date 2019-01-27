@@ -1,7 +1,6 @@
 package media.mediastreamer.processor.impl;
 
 import de.odysseus.ithaka.audioinfo.AudioInfo;
-import de.odysseus.ithaka.audioinfo.m4a.M4AInfo;
 import de.odysseus.ithaka.audioinfo.mp3.ID3v2Exception;
 import de.odysseus.ithaka.audioinfo.mp3.MP3Exception;
 import de.odysseus.ithaka.audioinfo.mp3.MP3Info;

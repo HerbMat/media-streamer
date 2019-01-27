@@ -55,4 +55,7 @@ public class CassandraConfig extends AbstractReactiveCassandraConfiguration {
     public String[] getEntityBasePackages() {
         return new String[]{"media.mediastreamer.domain"};
     }
+
+    @Override
+    protected boolean getMetricsEnabled() { return false; }
 }

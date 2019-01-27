@@ -3,7 +3,7 @@ package media.mediastreamer.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.AsyncTaskExecutor;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ConcurrentTaskExecutor;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
  * @author Mateusz Kozłowski <matikz1110@gmail.com>
  */
 @Configuration
+@EnableAsync
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
